@@ -4,29 +4,63 @@ using UnityEngine;
 
 public class gameplay_manager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] pieces;
-
     private const short maxGameObjectsRotated = 2;
     private short amountOfPiecesRotated = 0;
 
-    private void Update()
-    {
-        CheckAmountOfPiecesRotated();
+    private GameObject pieceOne;
+    private GameObject pieceTwo;
 
+    private bool pieceOneSelected = false;
+    private bool pieceTwoSelected = false;
 
-    }
-
-    private void CheckAmountOfPiecesRotated() 
+    private void Start()
     {
         amountOfPiecesRotated = 0;
+    }
 
-        for (short i = 0; i < pieces.Length; i++) 
+    private void Update()
+    {
+        if (!CanRotate()) 
         {
-            if (pieces[i].transform.eulerAngles.z == 180f) 
+            pieceOneSelected = false;
+            pieceTwoSelected = false;
+            amountOfPiecesRotated = 0;
+
+            if (CheckIfTwoPiecesAreSameColor()) 
             {
-                amountOfPiecesRotated += 1;
+                Destroy(pieceOne);
+                Destroy(pieceTwo);
+            }
+            else 
+            {
+                pieceOne.transform.Rotate(new Vector3(0f, 0f, 180f));
+                pieceTwo.transform.Rotate(new Vector3(0f, 0f, 180f));
             }
         }
+    }
+
+    public void NewPieceRotated(GameObject piece) 
+    {
+        amountOfPiecesRotated += 1;
+
+        if (pieceOneSelected)
+        {
+            pieceTwoSelected = true;
+            pieceTwo = piece;
+        }
+        else
+        {
+            pieceOneSelected = true;
+            pieceOne = piece;
+        }
+    }    
+
+    private bool CheckIfTwoPiecesAreSameColor() 
+    {
+        MeshFilter meshFilterOne = pieceOne.transform.GetChild(0).GetComponent<MeshFilter>();
+        MeshFilter meshFilterTwo = pieceTwo.transform.GetChild(0).GetComponent<MeshFilter>();
+        
+        return meshFilterOne.sharedMesh.colors == meshFilterTwo.sharedMesh.colors;               
     }
 
     public bool CanRotate() 

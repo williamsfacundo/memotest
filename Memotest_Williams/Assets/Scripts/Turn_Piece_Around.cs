@@ -21,6 +21,8 @@ public class Turn_Piece_Around : MonoBehaviour
         {
             transform.Rotate(new Vector3(0f, 0f, 180f));
             rotate = false;
+
+            gameplayManager.NewPieceRotated(gameObject);
         }
     }
 }
